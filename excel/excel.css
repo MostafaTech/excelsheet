@@ -1,0 +1,47 @@
+.excel {
+}
+.excel table {
+	border-collapse: collapse;
+}
+.excel table th {
+	background-color: #f2f2f2;
+	text-align: center;
+}
+.excel table thead th {
+}
+.excel table tbody th {
+	min-width: 40px;
+}
+.excel table th,
+.excel table td {
+	border: 1px solid #ccc;
+	padding: 3px;
+	margin: 0;
+}
+.excel table td {
+	min-width: 100px;
+}
+
+.excel .selection {
+	position: absolute;
+	width: 0; height: 0;
+	left: 0; top: 0;
+	transition: all ease 0.3;
+}
+.excel .selection .top,
+.excel .selection .right,
+.excel .selection .bottom,
+.excel .selection .left {
+	position: absolute;
+	width: 0; height: 0;
+	left: 0; top: 0;
+	background: #5292f7;
+}
+
+.excel input.editbox {
+	border: 0 none;
+	position: absolute;
+	left: 0; top: 0;
+	display: none;
+	padding: 2px;
+}
