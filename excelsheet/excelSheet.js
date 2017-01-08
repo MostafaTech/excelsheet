@@ -42,11 +42,11 @@
 	$.fn.excelSheet = function (options) {
 		if (typeof(options) == 'string') {
 			var $instance = this;
-			if (options == 'get-data') {
+			if (options == 'export') {
 				var data = [];
 				$instance.find('input.editbox').each(function () {
 					var val = $(this).val();
-					if (val != null && val != '') data.push({ k: $(this).attr('id'), v: val });
+					if (val != null && val != '') data.push({ a: $(this).attr('id'), v: val, f: $(this).attr('data-formula') });
 				});
 				return data;
 			}
@@ -95,6 +95,15 @@
 										}
 									})
 									.appendTo($td);
+								
+								if (options.data) {
+									$.each(options.data, function () {
+										if (this.a == address) {
+											$input.val(this.v);
+											if (this.f && this.f != '') $input.attr('data-formula', this.f)
+										}
+									})
+								}
 							}
 						}
 					}

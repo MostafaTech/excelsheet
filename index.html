@@ -8,21 +8,21 @@
 	</head>
 	<body>
 
-		<button type="button" id="btnExportData">get data to console</button>
+		<button type="button" id="btnExportData">export data to console</button>
 		<hr>
 		
 		<div id="excel"></div>
 		
 		<script type="text/javascript">
 			$(function () {
-				$('#excel').excelSheet({ rows: 20, cols: 10 });
+				var predata = [{ a: 'D3', v: '30', f: '10+20' }];
+				$('#excel').excelSheet({ rows: 20, cols: 10, data: predata });
 				
 				var rules = new ruleJS('excel');
     			rules.init();
-				console.log(rules);
 				
 				$('#btnExportData').click(function () {
-					var data = $('#excel').excelSheet('get-data');
+					var data = $('#excel').excelSheet('export');
 					console.debug(data);
 				})
 			})
