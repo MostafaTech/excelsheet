@@ -8,12 +8,15 @@
 	</head>
 	<body>
 		
-		<div class="excel">
+		<div id="excel" class="excel">
 		</div>
 		
 		<script type="text/javascript">
 			$(function () {
-				$('.excel').excel();
+				$('.excel').excel({ rows: 20, cols: 10 });
+				
+				// var rules = new ruleJS('excel');
+    			// rules.init();
 			})
 		</script>
 	</body>

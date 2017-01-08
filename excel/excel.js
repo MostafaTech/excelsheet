@@ -26,10 +26,16 @@
 			$selection.find('.right').css({ left: bounds.right, top: bounds.top - 1, width: 2, height: bounds.height + 2 })
 		};
 		obj.setEditable = function ($instance, $cell) {
-			var bounds = obj.getCellBounds($cell);
-			var $editbox = $instance.find('.editbox');
-			$editbox.css({ left: bounds.left + 1, top: bounds.top + 1, width: bounds.width - 1, height: bounds.height - 1 })
-				.show().val($cell.text()).focus().select();
+			//var bounds = obj.getCellBounds($cell);
+			$cell.addClass('active').find('input.editbox').focus().select();
+			// var $editbox = $instance.find('.editbox');
+			// $editbox.css({ left: bounds.left + 1, top: bounds.top + 1, width: bounds.width - 1, height: bounds.height - 1 })
+			// 	.show().val($cell.text()).focus().select();
+		};
+		obj.setFormulaBar = function ($instance, $cell) {
+			var $formularInput = $instance.find('input.formula');
+			var $cellInput = $cell.find('input.editbox');
+			$formularInput.val($cellInput.attr('data-formula'));
 		};
 		obj.getLetterAt = function (n, lower) {
 			return String.fromCharCode((lower ? 97 : 65) + n - 1);
@@ -51,6 +57,20 @@
 		return this.each(function () {
 			var $instance = $(this);
 			
+			// formulabar
+			var $formulabarDiv = $('<div></div>').appendTo($instance);
+			var $formulaInput = $('<input type="text" class="formula" />')
+				.on('keydown', function (evt) {
+					evt = evt ? evt : window.event;
+					var charCode = (evt.which) ? evt.which : evt.keyCode;
+					if (charCode == 13) {
+						var $cell = $instance.data('activeCellObject');
+						var $cellInput = $cell.find('input.editbox');
+						$cellInput.attr('data-formula', $(this).val());
+					}
+				})
+				.appendTo($formulabarDiv)
+			
 			// create table
 			var $table = $('<table>').appendTo($instance);
 			var $thead = $('<thead>').appendTo($table);
@@ -71,13 +91,14 @@
 						if (j == 0) {
 							$('<th>').text(i).appendTo($tr);
 						} else {
-							$('<td>').text('')
+							var $td = $('<td>')
 								.attr('data-cell-address', $.excelHelpers.getAddressAt(i, j))
 								.attr('data-cell-rowIndex', i)
 								.attr('data-cell-colIndex', j)
 								.click(function (e) {
 									$instance.data('activeCellObject', $(this));
 									$.excelHelpers.setSelection($instance, $(this));
+									$.excelHelpers.setFormulaBar($instance, $(this));
 									//console.debug($.excelHelpers.getCellByAddress($instance, $(this).attr('data-cell-address')))
 									//console.debug([$(this).data('cellAddress'), $(this).data('cellRowIndex'), $(this).data('cellColIndex')])
 								}).dblclick(function (event) {
@@ -86,6 +107,22 @@
 									return false
 								})
 								.appendTo($tr);
+								
+							var $input = $('<input id="' + $.excelHelpers.getAddressAt(i, j) + '" type="text" class="editbox" />')
+								.blur(function (e) {
+									var $this = $(this);
+									$this.parent()
+										.removeClass('active')
+										.find('span').text($this.val());
+								})
+								.on('keydown', function (evt) {
+									evt = evt ? evt : window.event;
+									var charCode = (evt.which) ? evt.which : evt.keyCode;
+									if (charCode == 13) $(this).trigger('blur')
+								})
+								.appendTo($td);
+								
+							var $span = $('<span></span>').appendTo($td);
 						}
 					}
 				}
@@ -100,20 +137,20 @@
 				.appendTo($instance);
 				
 			// editbox
-			var $editbox = $('<input type="text" class="editbox">')
-				.blur(function (e) {
-					var $cell = $instance.data('activeCellObject');
-					if ($cell) {
-						$cell.text($editbox.val())
-					}
-					$editbox.val('').hide().css({ left: 0, top: 0 })
-				})
-				.on('keydown', function (evt) {
-					evt = evt ? evt : window.event;
-      				var charCode = (evt.which) ? evt.which : evt.keyCode;
-					if (charCode == 13) $(this).trigger('blur')
-				})
-				.appendTo($instance)
+			// var $editbox = $('<input type="text" class="editbox">')
+			// 	.blur(function (e) {
+			// 		// var $cell = $instance.data('activeCellObject');
+			// 		// if ($cell) {
+			// 		// 	$cell.text($editbox.val())
+			// 		// }
+			// 		// $editbox.val('').hide().css({ left: 0, top: 0 })
+			// 	})
+			// 	.on('keydown', function (evt) {
+			// 		evt = evt ? evt : window.event;
+      		// 		var charCode = (evt.which) ? evt.which : evt.keyCode;
+			// 		if (charCode == 13) $(this).trigger('blur')
+			// 	})
+			// 	.appendTo($instance)
 			
 		})
 	}
