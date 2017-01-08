@@ -2,18 +2,18 @@
 	<head>
 		<script type="text/javascript" src="vendors/jquery.min.js"></script>
 		<script type="text/javascript" src="vendors/ruleJS.all.full.min.js"></script>
-		<script type="text/javascript" src="excel/excel.js"></script>
-		<link rel="stylesheet" href="excel/excel.css">
+		<script type="text/javascript" src="excelSheet/excelSheet.js"></script>
+		<link rel="stylesheet" href="excelSheet/excelSheet.css">
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
 		
-		<div id="excel" class="excel">
+		<div id="excel" class="excelsheet">
 		</div>
 		
 		<script type="text/javascript">
 			$(function () {
-				$('.excel').excel({ rows: 20, cols: 10 });
+				$('#excel').excelSheet({ rows: 20, cols: 10 });
 				
 				// var rules = new ruleJS('excel');
     			// rules.init();

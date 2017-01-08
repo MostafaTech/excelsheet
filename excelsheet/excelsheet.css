@@ -1,0 +1,61 @@
+.excelsheet {
+}
+.excelsheet table {
+	border-collapse: collapse;
+}
+.excelsheet table th {
+	background-color: #f2f2f2;
+	text-align: center;
+}
+.excelsheet table thead th {
+}
+.excelsheet table tbody th {
+	min-width: 40px;
+}
+.excelsheet table th,
+.excelsheet table td {
+	border: 1px solid #ccc;
+	padding: 3px;
+	margin: 0;
+}
+.excelsheet table td {
+	min-width: 100px;
+	position: relative;
+}
+
+.excelsheet .selection {
+	position: absolute;
+	width: 0; height: 0;
+	left: 0; top: 0;
+	transition: all ease 0.3;
+}
+.excelsheet .selection .top,
+.excelsheet .selection .right,
+.excelsheet .selection .bottom,
+.excelsheet .selection .left {
+	position: absolute;
+	width: 0; height: 0;
+	left: 0; top: 0;
+	background: #5292f7;
+}
+
+.excelsheet input.editbox {
+	border: 0 none;
+	position: absolute;
+	left: 0; top: 0;
+	width: 100%; height: 100%;
+	padding: 2px;
+	display: none;
+}
+.excelsheet table td.active input.editbox {
+	display: block;
+}
+
+.excelsheet input.formula {
+	display: block;
+	width: 100%;
+	margin-bottom: 5px;
+	line-height: 20px;
+	direction: ltr;
+	text-align: right;
+}
