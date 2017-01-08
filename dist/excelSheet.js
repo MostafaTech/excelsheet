@@ -1,3 +1,8 @@
+/**************************
+ * excelSheet 0.1
+ * 2017, January
+ * Mostafa Rowghanian
+ * ************************/
 (function ($) {
 	$.excelHelpers = (function () {
 		var obj = {};
