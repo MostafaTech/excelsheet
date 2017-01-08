@@ -53,105 +53,117 @@
 	})()
 	
 	$.fn.excelSheet = function (options) {
-		options = $.extend({}, $.excelHelpers.defaults, options);
-		return this.each(function () {
-			var $instance = $(this);
-			
-			// formulabar
-			var $formulabarDiv = $('<div></div>').appendTo($instance);
-			var $formulaInput = $('<input type="text" class="formula" />')
-				.on('keydown', function (evt) {
-					evt = evt ? evt : window.event;
-					var charCode = (evt.which) ? evt.which : evt.keyCode;
-					if (charCode == 13) {
-						var $cell = $instance.data('activeCellObject');
-						var $cellInput = $cell.find('input.editbox');
-						$cellInput.attr('data-formula', $(this).val());
-					}
-				})
-				.appendTo($formulabarDiv)
-			
-			// create table
-			var $table = $('<table>').appendTo($instance);
-			var $thead = $('<thead>').appendTo($table);
-			var $tbody = $('<tbody>').appendTo($table);
-			for (var i = 0; i <= options.rows; i++) {
-				if (i == 0) {
-					var $tr = $('<tr>').appendTo($thead);
-					
-					for (var j = 0; j <= options.cols; j++) {
-						if (j == 0)
-							$('<th>').appendTo($tr)
-						else
-							$('<th>').text($.excelHelpers.getLetterAt(j)).appendTo($tr)
-					}
-				} else {
-					var $tr = $('<tr>').appendTo($tbody);
-					for (var j = 0; j <= options.cols; j++) {
-						if (j == 0) {
-							$('<th>').text(i).appendTo($tr);
-						} else {
-							var $td = $('<td>')
-								.attr('data-cell-address', $.excelHelpers.getAddressAt(i, j))
-								.attr('data-cell-rowIndex', i)
-								.attr('data-cell-colIndex', j)
-								.click(function (e) {
-									$instance.data('activeCellObject', $(this));
-									$.excelHelpers.setSelection($instance, $(this));
-									$.excelHelpers.setFormulaBar($instance, $(this));
-									//console.debug($.excelHelpers.getCellByAddress($instance, $(this).attr('data-cell-address')))
-									//console.debug([$(this).data('cellAddress'), $(this).data('cellRowIndex'), $(this).data('cellColIndex')])
-								}).dblclick(function (event) {
-									$.excelHelpers.setEditable($instance, $(this));
-									event.stopPropagation();
-									return false
-								})
-								.appendTo($tr);
-								
-							var $input = $('<input id="' + $.excelHelpers.getAddressAt(i, j) + '" type="text" class="editbox" />')
-								.blur(function (e) {
-									var $this = $(this);
-									$this.parent()
-										.removeClass('active')
-										.find('span').text($this.val());
-								})
-								.on('keydown', function (evt) {
-									evt = evt ? evt : window.event;
-									var charCode = (evt.which) ? evt.which : evt.keyCode;
-									if (charCode == 13) $(this).trigger('blur')
-								})
-								.appendTo($td);
-								
-							var $span = $('<span></span>').appendTo($td);
+		if (typeof(options) == 'string') {
+			var $instance = this;
+			if (options == 'get-data') {
+				var data = [];
+				$instance.find('input.editbox').each(function () {
+					var val = $(this).val();
+					if (val != null && val != '') data.push({ k: $(this).attr('id'), v: val });
+				});
+				return data;
+			}
+		} else {
+			options = $.extend({}, $.excelHelpers.defaults, options);
+			return this.each(function () {
+				var $instance = $(this);
+				if ($instance.hasClass('excelsheet') == false) $instance.addClass('excelsheet')
+				
+				// formulabar
+				var $formulabarDiv = $('<div></div>').appendTo($instance);
+				var $formulaInput = $('<input type="text" class="formula" />')
+					.on('keydown', function (evt) {
+						evt = evt ? evt : window.event;
+						var charCode = (evt.which) ? evt.which : evt.keyCode;
+						if (charCode == 13) {
+							var $cell = $instance.data('activeCellObject');
+							var $cellInput = $cell.find('input.editbox');
+							$cellInput.attr('data-formula', $(this).val());
+						}
+					})
+					.appendTo($formulabarDiv)
+				
+				// create table
+				var $table = $('<table>').appendTo($instance);
+				var $thead = $('<thead>').appendTo($table);
+				var $tbody = $('<tbody>').appendTo($table);
+				for (var i = 0; i <= options.rows; i++) {
+					if (i == 0) {
+						var $tr = $('<tr>').appendTo($thead);
+						
+						for (var j = 0; j <= options.cols; j++) {
+							if (j == 0)
+								$('<th>').appendTo($tr)
+							else
+								$('<th>').text($.excelHelpers.getLetterAt(j)).appendTo($tr)
+						}
+					} else {
+						var $tr = $('<tr>').appendTo($tbody);
+						for (var j = 0; j <= options.cols; j++) {
+							if (j == 0) {
+								$('<th>').text(i).appendTo($tr);
+							} else {
+								var $td = $('<td>')
+									.attr('data-cell-address', $.excelHelpers.getAddressAt(i, j))
+									.attr('data-cell-rowIndex', i)
+									.attr('data-cell-colIndex', j)
+									.click(function (e) {
+										$instance.data('activeCellObject', $(this));
+										$.excelHelpers.setSelection($instance, $(this));
+										$.excelHelpers.setFormulaBar($instance, $(this));
+										//console.debug($.excelHelpers.getCellByAddress($instance, $(this).attr('data-cell-address')))
+										//console.debug([$(this).data('cellAddress'), $(this).data('cellRowIndex'), $(this).data('cellColIndex')])
+									}).dblclick(function (event) {
+										$.excelHelpers.setEditable($instance, $(this));
+										event.stopPropagation();
+										return false
+									})
+									.appendTo($tr);
+									
+								var $input = $('<input id="' + $.excelHelpers.getAddressAt(i, j) + '" type="text" class="editbox" />')
+									.blur(function (e) {
+										var $this = $(this);
+										$this.parent()
+											.removeClass('active')
+											.find('span').text($this.val());
+									})
+									.on('keydown', function (evt) {
+										evt = evt ? evt : window.event;
+										var charCode = (evt.which) ? evt.which : evt.keyCode;
+										if (charCode == 13) $(this).trigger('blur')
+									})
+									.appendTo($td);
+									
+								var $span = $('<span></span>').appendTo($td);
+							}
 						}
 					}
 				}
-			}
-			
-			// selection
-			var $selection = $('<div class="selection">')
-				.append($('<div>').addClass('top'))
-				.append($('<div>').addClass('right'))
-				.append($('<div>').addClass('bottom'))
-				.append($('<div>').addClass('left'))
-				.appendTo($instance);
 				
-			// editbox
-			// var $editbox = $('<input type="text" class="editbox">')
-			// 	.blur(function (e) {
-			// 		// var $cell = $instance.data('activeCellObject');
-			// 		// if ($cell) {
-			// 		// 	$cell.text($editbox.val())
-			// 		// }
-			// 		// $editbox.val('').hide().css({ left: 0, top: 0 })
-			// 	})
-			// 	.on('keydown', function (evt) {
-			// 		evt = evt ? evt : window.event;
-      		// 		var charCode = (evt.which) ? evt.which : evt.keyCode;
-			// 		if (charCode == 13) $(this).trigger('blur')
-			// 	})
-			// 	.appendTo($instance)
-			
-		})
+				// selection
+				var $selection = $('<div class="selection">')
+					.append($('<div>').addClass('top'))
+					.append($('<div>').addClass('right'))
+					.append($('<div>').addClass('bottom'))
+					.append($('<div>').addClass('left'))
+					.appendTo($instance);
+					
+				// editbox
+				// var $editbox = $('<input type="text" class="editbox">')
+				// 	.blur(function (e) {
+				// 		// var $cell = $instance.data('activeCellObject');
+				// 		// if ($cell) {
+				// 		// 	$cell.text($editbox.val())
+				// 		// }
+				// 		// $editbox.val('').hide().css({ left: 0, top: 0 })
+				// 	})
+				// 	.on('keydown', function (evt) {
+				// 		evt = evt ? evt : window.event;
+				// 		var charCode = (evt.which) ? evt.which : evt.keyCode;
+				// 		if (charCode == 13) $(this).trigger('blur')
+				// 	})
+				// 	.appendTo($instance)
+			})
+		}
 	}
 })(jQuery)
