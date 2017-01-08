@@ -11,15 +11,15 @@
 		<button type="button" id="btnExportData">get data to console</button>
 		<hr>
 		
-		<div id="excel">
-		</div>
-
+		<div id="excel"></div>
+		
 		<script type="text/javascript">
 			$(function () {
 				$('#excel').excelSheet({ rows: 20, cols: 10 });
 				
 				var rules = new ruleJS('excel');
     			rules.init();
+				console.log(rules);
 				
 				$('#btnExportData').click(function () {
 					var data = $('#excel').excelSheet('get-data');
